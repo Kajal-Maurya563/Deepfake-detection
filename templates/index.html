@@ -1,0 +1,168 @@
+{% extends "layout.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-7">
+        <div class="card mb-4 shadow-sm border-primary">
+            <div class="card-header bg-primary text-white">
+                <h4 class="my-0"><i class="fas fa-upload me-2"></i>Upload Image for DeepFake Detection</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <p class="lead">Detect if an image is real or a deepfake by uploading it below.</p>
+                        <form action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data" id="upload-form">
+                            <div class="mb-3">
+                                <label for="file" class="form-label">Choose an image containing a face:</label>
+                                <input class="form-control" type="file" id="file" name="file" accept=".jpg,.jpeg,.png" required>
+                                <div class="form-text">Supported formats: JPG, JPEG, PNG. Max size: 16MB.</div>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg" id="upload-btn">
+                                    <i class="fas fa-search me-2"></i>Detect DeepFake
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <div class="alert alert-info">
+                            <h5><i class="fas fa-info-circle me-2"></i>How it works:</h5>
+                            <ol>
+                                <li>Upload an image containing a face</li>
+                                <li>Our system processes the image using the MesoNet neural network</li>
+                                <li>Get results showing if the face is likely real or a deepfake</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-5">
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-dark">
+                <h4 class="my-0"><i class="fas fa-chart-bar me-2"></i>Recent Detection Results</h4>
+            </div>
+            <div class="card-body">
+                {% if recent_results %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Result</th>
+                                <th>Confidence</th>
+                                <th>Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for result in recent_results %}
+                            <tr>
+                                <td>
+                                    <img src="{{ url_for('static', filename='uploads/' + result['filename']) }}" 
+                                         alt="Thumbnail" class="img-thumbnail" style="max-width: 50px;">
+                                </td>
+                                <td>
+                                    {% if result['result'] == 'Real' %}
+                                    <span class="badge bg-success">Real</span>
+                                    {% else %}
+                                    <span class="badge bg-danger">Fake</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ "%.1f"|format(result['confidence'] * 100) }}%</td>
+                                <td>{{ result['timestamp'] }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-center py-3">No detection results yet.</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="card shadow-sm">
+            <div class="card-header bg-info text-white">
+                <h4 class="my-0"><i class="fas fa-question-circle me-2"></i>Why Detect DeepFakes?</h4>
+            </div>
+            <div class="card-body">
+                <p>DeepFakes can be used to:</p>
+                <ul>
+                    <li>Spread misinformation</li>
+                    <li>Create fake news</li>
+                    <li>Impersonate others</li>
+                    <li>Manipulate public opinion</li>
+                </ul>
+                <p>Our tool helps identify synthetic media to protect against these threats.</p>
+                
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('about') }}" class="btn btn-outline-info">Learn More</a>
+                    <a href="{{ url_for('quiz') }}" class="btn btn-outline-primary">Test Your Knowledge</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card shadow">
+            <div class="card-header">
+                <h4><i class="fas fa-graduation-cap me-2"></i>Educational Resources</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card mb-3">
+                            <div class="card-body text-center">
+                                <i class="fas fa-brain fa-3x mb-3 text-primary"></i>
+                                <h5 class="card-title">How MesoNet Works</h5>
+                                <p class="card-text">Learn about the neural network architecture used for detection</p>
+                                <a href="{{ url_for('how_it_works') }}" class="btn btn-sm btn-primary">Learn More</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card mb-3">
+                            <div class="card-body text-center">
+                                <i class="fas fa-layer-group fa-3x mb-3 text-warning"></i>
+                                <h5 class="card-title">Convolution Explained</h5>
+                                <p class="card-text">Interactive demonstration of convolution layers</p>
+                                <a href="{{ url_for('convolution') }}" class="btn btn-sm btn-warning">Explore</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card mb-3">
+                            <div class="card-body text-center">
+                                <i class="fas fa-images fa-3x mb-3 text-success"></i>
+                                <h5 class="card-title">DeepFake Gallery</h5>
+                                <p class="card-text">Examples of real vs fake images for comparison</p>
+                                <a href="{{ url_for('gallery') }}" class="btn btn-sm btn-success">View Gallery</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Show loading spinner on form submission
+    document.getElementById('upload-form').addEventListener('submit', function() {
+        const button = document.getElementById('upload-btn');
+        button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
+        button.disabled = true;
+    });
+</script>
+{% endblock %}

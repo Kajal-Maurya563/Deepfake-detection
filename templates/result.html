@@ -1,0 +1,174 @@
+{% extends "layout.html" %}
+
+{% block title %}Detection Result{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow">
+            <div class="card-header {% if result == 'Real' %}bg-success{% else %}bg-danger{% endif %} text-white">
+                <h3 class="my-0">
+                    {% if result == 'Real' %}
+                    <i class="fas fa-check-circle me-2"></i>Real Image Detected
+                    {% else %}
+                    <i class="fas fa-exclamation-circle me-2"></i>DeepFake Detected
+                    {% endif %}
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="image-container text-center mb-3">
+                            <img src="{{ url_for('static', filename='uploads/' + filename) }}" 
+                                 alt="Analyzed Image" class="img-fluid rounded">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h4>Analysis Results:</h4>
+                        
+                        <div class="alert {% if result == 'Real' %}alert-success{% else %}alert-danger{% endif %} mb-4">
+                            <h5 class="alert-heading">
+                                {% if result == 'Real' %}
+                                <i class="fas fa-user me-2"></i>This appears to be a real face
+                                {% else %}
+                                <i class="fas fa-robot me-2"></i>This appears to be a deepfake
+                                {% endif %}
+                            </h5>
+                            <p>Confidence: <strong>{{ "%.1f"|format(confidence * 100) }}%</strong></p>
+                        </div>
+                        
+                        <div class="progress mb-4" style="height: 30px;">
+                            <div class="progress-bar {% if result == 'Real' %}bg-success{% else %}bg-danger{% endif %}" 
+                                 role="progressbar" 
+                                 style="width: {{ confidence * 100 }}%;" 
+                                 aria-valuenow="{{ confidence * 100 }}" 
+                                 aria-valuemin="0" 
+                                 aria-valuemax="100">
+                                {{ "%.1f"|format(confidence * 100) }}%
+                            </div>
+                        </div>
+                        
+                        <h5>What does this mean?</h5>
+                        {% if result == 'Real' %}
+                        <p>Our MesoNet model has determined that this image likely contains a real face, 
+                           not a synthetic or AI-generated face.</p>
+                        {% else %}
+                        <p>Our MesoNet model has determined that this image likely contains a deepfake - 
+                           an AI-generated or manipulated face.</p>
+                        {% endif %}
+                        
+                        <div class="mt-4">
+                            <h5>What next?</h5>
+                            <div class="d-grid gap-2">
+                                <a href="{{ url_for('home') }}" class="btn btn-primary">
+                                    <i class="fas fa-arrow-left me-2"></i>Analyze Another Image
+                                </a>
+                                <a href="{{ url_for('how_it_works') }}" class="btn btn-outline-info">
+                                    <i class="fas fa-info-circle me-2"></i>Learn How Detection Works
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-4 shadow">
+            <div class="card-header bg-dark">
+                <h4><i class="fas fa-chart-line me-2"></i>Detection Details</h4>
+            </div>
+            <div class="card-body">
+                <canvas id="confidenceChart" width="400" height="200"></canvas>
+                
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-header bg-light text-dark">
+                                <h5 class="my-0">Technical Details</h5>
+                            </div>
+                            <div class="card-body">
+                                <p><strong>Model:</strong> MesoNet</p>
+                                <p><strong>Input Size:</strong> 256x256 pixels</p>
+                                <p><strong>Detection Type:</strong> Face Manipulation</p>
+                                <p><strong>Processing Time:</strong> < 2 seconds</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header bg-light text-dark">
+                                <h5 class="my-0">Limitations</h5>
+                            </div>
+                            <div class="card-body">
+                                <p>MesoNet is trained on specific types of deepfakes and may not detect:</p>
+                                <ul>
+                                    <li>Very advanced deepfakes with high realism</li>
+                                    <li>Manipulations that don't alter facial features</li>
+                                    <li>Images without clear facial features</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Create confidence chart using Chart.js
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('confidenceChart').getContext('2d');
+        
+        const realValue = {{ confidence if result == 'Real' else 1.0 - confidence }};
+        const fakeValue = {{ 1.0 - confidence if result == 'Real' else confidence }};
+        
+        const chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Real', 'Fake'],
+                datasets: [{
+                    label: 'Confidence Score',
+                    data: [realValue * 100, fakeValue * 100],
+                    backgroundColor: [
+                        'rgba(40, 167, 69, 0.7)',  // Green for real
+                        'rgba(220, 53, 69, 0.7)'   // Red for fake
+                    ],
+                    borderColor: [
+                        'rgba(40, 167, 69, 1)',
+                        'rgba(220, 53, 69, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        title: {
+                            display: true,
+                            text: 'Confidence (%)'
+                        }
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Detection Confidence Analysis',
+                        font: {
+                            size: 16
+                        }
+                    },
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

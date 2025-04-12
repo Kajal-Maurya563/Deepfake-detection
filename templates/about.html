@@ -1,0 +1,214 @@
+{% extends "layout.html" %}
+
+{% block title %}About{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card shadow">
+            <div class="card-header bg-dark">
+                <h3 class="my-0"><i class="fas fa-info-circle me-2"></i>About DeepFake Detector</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h4>Project Overview</h4>
+                        <p class="lead">
+                            The DeepFake Detection System is an educational web application designed to identify AI-generated fake images 
+                            using advanced neural network technology.
+                        </p>
+                        
+                        <p>
+                            This project was developed as part of a software engineering initiative to combat the growing threat of deepfakes 
+                            in digital media. Our system uses the MesoNet convolutional neural network architecture specifically designed 
+                            to detect facial manipulations in images.
+                        </p>
+                        
+                        <h4 class="mt-4">Project Timeline</h4>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Phase</th>
+                                        <th>Duration</th>
+                                        <th>Timeline</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Requirement Analysis</td>
+                                        <td>10 Days</td>
+                                        <td>Day 1–10</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Design</td>
+                                        <td>10 Days</td>
+                                        <td>Day 11–20</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Implementation</td>
+                                        <td>20 Days</td>
+                                        <td>Day 21–40</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Testing</td>
+                                        <td>10 Days</td>
+                                        <td>Day 41–50</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Deployment & Maintenance</td>
+                                        <td>10 Days</td>
+                                        <td>Day 51–60</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card mb-4">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="my-0">Team Roles</h5>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong>Alice Sharma</strong>
+                                            <br><span class="text-muted">Project Manager</span>
+                                        </div>
+                                        <span class="badge rounded-pill bg-primary"><i class="fas fa-tasks"></i></span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong>Ravi Mehta</strong>
+                                            <br><span class="text-muted">Lead ML Developer</span>
+                                        </div>
+                                        <span class="badge rounded-pill bg-success"><i class="fas fa-brain"></i></span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong>Priya Kapoor</strong>
+                                            <br><span class="text-muted">Web Developer</span>
+                                        </div>
+                                        <span class="badge rounded-pill bg-info"><i class="fas fa-code"></i></span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong>Swati Roy</strong>
+                                            <br><span class="text-muted">QA Engineer</span>
+                                        </div>
+                                        <span class="badge rounded-pill bg-warning text-dark"><i class="fas fa-bug"></i></span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header bg-info text-white">
+                                <h5 class="my-0">Performance Metrics</h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="metricsChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <hr class="my-4">
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4>Future Development</h4>
+                        <p>Our development roadmap includes:</p>
+                        <ul>
+                            <li><strong>Version 2.0:</strong> Video deepfake detection</li>
+                            <li><strong>Version 3.0:</strong> Audio deepfake detection</li>
+                            <li><strong>Version 4.0:</strong> Real-time streaming detection</li>
+                        </ul>
+                        
+                        <p>We're using a spiral model of development, which allows us to continuously improve 
+                           and expand the system's capabilities through iterative development cycles.</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h4>Technology Stack</h4>
+                        <div class="row">
+                            <div class="col-6">
+                                <h5>Backend</h5>
+                                <ul>
+                                    <li>Python 3.8+</li>
+                                    <li>Flask</li>
+                                    <li>TensorFlow/Keras</li>
+                                    <li>SQLite Database</li>
+                                </ul>
+                            </div>
+                            <div class="col-6">
+                                <h5>Frontend</h5>
+                                <ul>
+                                    <li>HTML5/CSS3</li>
+                                    <li>JavaScript</li>
+                                    <li>Bootstrap 5</li>
+                                    <li>Chart.js</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <h4>System Architecture</h4>
+                        <img src="https://images.unsplash.com/photo-1616161560417-66d4db5892ec" alt="System Architecture" class="img-fluid rounded mb-3">
+                        
+                        <p>
+                            The DeepFake Detection System utilizes a modular architecture with four main components:
+                        </p>
+                        <ol>
+                            <li><strong>User Interface Module:</strong> Handles user interactions, image uploads, and results display</li>
+                            <li><strong>Preprocessing Module:</strong> Prepares images for analysis (resizing, normalization)</li>
+                            <li><strong>MesoNet Model:</strong> Performs the deepfake detection using convolutional neural networks</li>
+                            <li><strong>Results Management:</strong> Stores and retrieves detection results</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Create metrics chart
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('metricsChart').getContext('2d');
+        
+        const chart = new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: ['Accuracy', 'Precision', 'Recall', 'F1-Score', 'Speed'],
+                datasets: [{
+                    label: 'Model Performance',
+                    data: [92.6, 93.2, 91.8, 92.5, 90.0],
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgb(54, 162, 235)',
+                    pointBackgroundColor: 'rgb(54, 162, 235)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgb(54, 162, 235)'
+                }]
+            },
+            options: {
+                scales: {
+                    r: {
+                        angleLines: {
+                            display: true
+                        },
+                        suggestedMin: 80,
+                        suggestedMax: 100
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

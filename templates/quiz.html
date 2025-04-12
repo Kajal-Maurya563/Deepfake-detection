@@ -1,0 +1,86 @@
+{% extends "layout.html" %}
+
+{% block title %}Deepfake Detection Quiz{% endblock %}
+
+{% block content %}
+<div class="card shadow">
+    <div class="card-header bg-primary text-white">
+        <h3 class="my-0"><i class="fas fa-question-circle me-2"></i>Deepfake Detection Quiz</h3>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-12 mb-4">
+                <p class="lead">
+                    Test your knowledge about deepfakes and your ability to spot them! This interactive quiz 
+                    will challenge your understanding of deepfake technology and detection techniques.
+                </p>
+                
+                <div class="alert alert-info" id="quiz-instructions">
+                    <h5><i class="fas fa-info-circle me-2"></i>Instructions</h5>
+                    <p>
+                        This quiz consists of multiple-choice questions and image analysis challenges. 
+                        For each question, select the answer you think is correct and click "Next" to proceed.
+                    </p>
+                    <p class="mb-0">
+                        Your score will be calculated at the end. Good luck!
+                    </p>
+                </div>
+                
+                <div class="progress mb-3" id="quiz-progress">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: 0%;" 
+                         aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quiz Container -->
+        <div id="quiz-container">
+            <!-- Start Screen -->
+            <div id="quiz-start" class="text-center p-4">
+                <h2 class="mb-4">Are You Ready?</h2>
+                <p class="lead">
+                    This quiz will test your ability to identify deepfakes and understand the technology behind them.
+                </p>
+                <button id="start-quiz" class="btn btn-primary btn-lg mt-3">
+                    <i class="fas fa-play me-2"></i>Start Quiz
+                </button>
+            </div>
+            
+            <!-- Questions Container - Will be populated by JavaScript -->
+            <div id="questions-container" class="d-none">
+                <!-- Question will be inserted here by JavaScript -->
+            </div>
+            
+            <!-- Results Screen -->
+            <div id="quiz-results" class="d-none text-center p-4">
+                <h2 class="mb-4">Quiz Completed!</h2>
+                <div class="result-info p-3 mb-4 rounded">
+                    <h3>Your Score: <span id="score-display">0%</span></h3>
+                    <div class="progress mb-3">
+                        <div id="result-progress-bar" class="progress-bar" role="progressbar" 
+                             style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                    </div>
+                    <p id="score-message">Thanks for taking the quiz!</p>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 offset-md-3">
+                        <div class="d-grid gap-2">
+                            <button id="restart-quiz" class="btn btn-primary">
+                                <i class="fas fa-redo me-2"></i>Take Quiz Again
+                            </button>
+                            <a href="{{ url_for('home') }}" class="btn btn-outline-success">
+                                <i class="fas fa-home me-2"></i>Return to Home
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/quiz.js') }}"></script>
+{% endblock %}

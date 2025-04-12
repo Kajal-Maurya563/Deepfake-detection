@@ -1,0 +1,262 @@
+{% extends "layout.html" %}
+
+{% block title %}Convolution Explained{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-warning text-dark">
+                <h3 class="my-0"><i class="fas fa-layer-group me-2"></i>Interactive Convolution Demonstration</h3>
+            </div>
+            <div class="card-body">
+                <p class="lead">
+                    Convolutional layers are the building blocks of deepfake detection models like MesoNet. 
+                    This interactive demo shows how convolution works to extract features from images.
+                </p>
+                
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <h4>Original Image</h4>
+                        <div class="input-image p-2 border rounded text-center bg-light">
+                            <canvas id="inputCanvas" width="200" height="200" class="img-fluid"></canvas>
+                        </div>
+                        <div class="form-group mt-3">
+                            <label for="patternSelect" class="form-label">Select Input Pattern:</label>
+                            <select class="form-select" id="patternSelect">
+                                <option value="edge">Edge Pattern</option>
+                                <option value="gradient">Gradient</option>
+                                <option value="circle">Circle</option>
+                                <option value="cross">Cross</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h4>Convolution Result</h4>
+                        <div class="output-image p-2 border rounded text-center bg-light">
+                            <canvas id="outputCanvas" width="200" height="200" class="img-fluid"></canvas>
+                        </div>
+                        <div class="form-group mt-3">
+                            <label for="kernelSelect" class="form-label">Select Convolution Kernel:</label>
+                            <select class="form-select" id="kernelSelect">
+                                <option value="edge">Edge Detection</option>
+                                <option value="sharpen">Sharpen</option>
+                                <option value="blur">Blur</option>
+                                <option value="emboss">Emboss</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <h4>Kernel Visualization</h4>
+                        <div class="kernel-display p-3 border rounded bg-light">
+                            <div class="row justify-content-center">
+                                <div class="col-auto">
+                                    <table class="table table-bordered kernel-table" id="kernelTable">
+                                        <tbody>
+                                            <tr>
+                                                <td>0</td><td>0</td><td>0</td>
+                                            </tr>
+                                            <tr>
+                                                <td>0</td><td>1</td><td>0</td>
+                                            </tr>
+                                            <tr>
+                                                <td>0</td><td>0</td><td>0</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <button id="applyConvolution" class="btn btn-warning btn-lg w-100">
+                            <i class="fas fa-play me-2"></i>Apply Convolution
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h3 class="my-0"><i class="fas fa-book me-2"></i>How Convolution Works</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4>The Math Behind Convolution</h4>
+                        <p>
+                            Convolution is a mathematical operation that slides a kernel (small matrix) over an input image 
+                            and computes the element-wise multiplication and sum at each position.
+                        </p>
+                        
+                        <p>Mathematically, the operation can be expressed as:</p>
+                        
+                        <div class="p-3 bg-light border rounded mb-3">
+                            <p class="text-center mb-0">
+                                (I * K)(x,y) = ∑∑ I(x-m,y-n) × K(m,n)
+                            </p>
+                        </div>
+                        
+                        <p>Where:</p>
+                        <ul>
+                            <li>I is the input image</li>
+                            <li>K is the kernel</li>
+                            <li>* represents the convolution operation</li>
+                            <li>x,y are the coordinates in the output</li>
+                            <li>m,n are the coordinates in the kernel</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h4>Role in DeepFake Detection</h4>
+                        <p>
+                            In MesoNet and other deepfake detection CNNs, multiple convolutional layers work together to:
+                        </p>
+                        
+                        <ol>
+                            <li><strong>Extract Low-Level Features:</strong> First layers detect edges, textures, and colors</li>
+                            <li><strong>Combine into Mid-Level Features:</strong> Middle layers find patterns and structures</li>
+                            <li><strong>Identify High-Level Features:</strong> Deeper layers detect complex manipulations</li>
+                            <li><strong>Make Classifications:</strong> Final layers determine if an image is real or fake</li>
+                        </ol>
+                        
+                        <p>
+                            By learning specific kernel values during training, the network becomes capable of 
+                            identifying the subtle artifacts that distinguish deepfakes from real images.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <div class="alert alert-success">
+                            <h5><i class="fas fa-graduation-cap me-2"></i>Learning Exercise</h5>
+                            <p>
+                                Try each kernel with different input patterns and observe how different kernels 
+                                highlight different aspects of the image. This is similar to how MesoNet's early 
+                                convolutional layers extract basic features from faces.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-dark">
+                <h4 class="my-0"><i class="fas fa-question-circle me-2"></i>Why Convolution Matters</h4>
+            </div>
+            <div class="card-body">
+                <img src="https://images.unsplash.com/photo-1717501218636-a390f9ac5957" alt="AI Processing" class="img-fluid rounded mb-3">
+                
+                <h5>Key Advantages of CNNs</h5>
+                <ul>
+                    <li><strong>Parameter Sharing:</strong> Each kernel is applied across the entire image, reducing the number of parameters</li>
+                    <li><strong>Translation Invariance:</strong> Features can be detected regardless of their position in the image</li>
+                    <li><strong>Hierarchical Feature Learning:</strong> Deeper layers build upon features from earlier layers</li>
+                    <li><strong>Scale and Rotation Tolerance:</strong> With pooling layers, CNNs can handle variations</li>
+                </ul>
+                
+                <div class="alert alert-info mt-3">
+                    <h5><i class="fas fa-lightbulb me-2"></i>Did You Know?</h5>
+                    <p class="mb-0">
+                        Convolution is inspired by how the visual cortex processes images in animals. 
+                        Each neuron responds to stimuli only in a restricted region of the visual field, 
+                        similar to how a convolution kernel processes only a small region of the image at a time.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="my-0"><i class="fas fa-brain me-2"></i>MesoNet's Convolution Layers</h4>
+            </div>
+            <div class="card-body">
+                <p>MesoNet uses 4 convolutional layers of increasing complexity:</p>
+                
+                <div class="accordion" id="convolutionAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingOne">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                Layer 1: Edge Detection
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#convolutionAccordion">
+                            <div class="accordion-body">
+                                <p>3×3 kernels with 8 filters detect basic edges and structures. These identify fundamental patterns in the image.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                Layer 2: Texture Analysis
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#convolutionAccordion">
+                            <div class="accordion-body">
+                                <p>5×5 kernels with 8 filters detect more complex patterns like textures, which can reveal inconsistencies in synthetic images.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingThree">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                Layer 3: Feature Composition
+                            </button>
+                        </h2>
+                        <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#convolutionAccordion">
+                            <div class="accordion-body">
+                                <p>5×5 kernels with 16 filters combine lower-level features into more meaningful representations of facial elements.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingFour">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                Layer 4: Artifact Detection
+                            </button>
+                        </h2>
+                        <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#convolutionAccordion">
+                            <div class="accordion-body">
+                                <p>5×5 kernels with 16 filters identify specific artifacts and patterns that are characteristic of deepfake generation.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="d-grid gap-2 mt-4">
+                    <a href="{{ url_for('how_it_works') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to How It Works
+                    </a>
+                    <a href="{{ url_for('quiz') }}" class="btn btn-success">
+                        <i class="fas fa-quiz me-2"></i>Test Your Knowledge
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/convolution.js') }}"></script>
+<style>
+    .kernel-table td {
+        width: 40px;
+        height: 40px;
+        text-align: center;
+        vertical-align: middle;
+        font-weight: bold;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,245 @@
+/* Main Styles for DeepFake Detection App */
+
+/* Custom Variables */
+:root {
+    --real-color: #28a745;
+    --fake-color: #dc3545;
+    --highlight-color: #17a2b8;
+    --neutral-color: #6c757d;
+}
+
+/* General Styles */
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+.footer {
+    margin-top: auto;
+}
+
+/* Card Styling */
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2) !important;
+}
+
+.card-header {
+    font-weight: bold;
+}
+
+/* Image Display */
+.image-container {
+    position: relative;
+    overflow: hidden;
+    border-radius: 0.375rem;
+}
+
+.image-container img {
+    transition: transform 0.3s ease;
+}
+
+.image-container:hover img {
+    transform: scale(1.03);
+}
+
+/* Detection Result Styling */
+.result-real {
+    border-color: var(--real-color);
+    border-width: 2px;
+}
+
+.result-fake {
+    border-color: var(--fake-color);
+    border-width: 2px;
+}
+
+/* Button Enhancements */
+.btn {
+    position: relative;
+    overflow: hidden;
+    transform: translate3d(0, 0, 0);
+}
+
+.btn:after {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    background-image: radial-gradient(circle, #fff 10%, transparent 10.01%);
+    background-repeat: no-repeat;
+    background-position: 50%;
+    transform: scale(10, 10);
+    opacity: 0;
+    transition: transform .5s, opacity 1s;
+}
+
+.btn:active:after {
+    transform: scale(0, 0);
+    opacity: .3;
+    transition: 0s;
+}
+
+/* Process Steps */
+.detection-process {
+    padding: 20px 0;
+}
+
+.process-step {
+    text-align: center;
+    padding: 15px;
+    transition: all 0.3s ease;
+}
+
+.process-step:hover {
+    transform: translateY(-10px);
+}
+
+.icon-wrapper {
+    margin: 0 auto;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin-bottom: 15px;
+}
+
+/* Quiz Styling */
+#quiz-container {
+    min-height: 400px;
+}
+
+.question-card {
+    display: none;
+    animation: fadeIn 0.5s;
+}
+
+.question-card.active {
+    display: block;
+}
+
+.option-btn {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 10px;
+    text-align: left;
+    border: 2px solid var(--bs-gray-300);
+    border-radius: 5px;
+    background-color: var(--bs-gray-800);
+    transition: all 0.2s ease;
+}
+
+.option-btn:hover {
+    background-color: var(--bs-gray-700);
+    transform: translateX(5px);
+}
+
+.option-btn.selected {
+    border-color: var(--bs-primary);
+    background-color: var(--bs-primary-bg-subtle);
+}
+
+.option-btn.correct {
+    border-color: var(--real-color);
+    background-color: rgba(40, 167, 69, 0.2);
+}
+
+.option-btn.incorrect {
+    border-color: var(--fake-color);
+    background-color: rgba(220, 53, 69, 0.2);
+}
+
+.feedback {
+    padding: 15px;
+    border-radius: 5px;
+    margin-top: 15px;
+    display: none;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.pulse {
+    animation: pulse 2s infinite;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .icon-wrapper {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .process-step {
+        margin-bottom: 20px;
+    }
+}
+
+/* Convolution Demonstration Styles */
+.kernel-table {
+    margin: 0 auto;
+    background-color: var(--bs-gray-700);
+}
+
+.kernel-table td {
+    text-align: center;
+    width: 50px;
+    height: 50px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.kernel-table td:hover {
+    background-color: var(--bs-primary);
+}
+
+/* Gallery Specific Styles */
+.card-img-top {
+    height: 250px;
+    object-fit: cover;
+}
+
+/* Upload Form Enhancement */
+#upload-form {
+    position: relative;
+}
+
+.form-control:focus {
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Label highlighting for file input */
+.form-label {
+    transition: color 0.3s ease;
+}
+
+.form-control:focus + .form-label {
+    color: var(--bs-primary);
+}

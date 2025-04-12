@@ -1,0 +1,280 @@
+{% extends "layout.html" %}
+
+{% block title %}DeepFake Gallery{% endblock %}
+
+{% block content %}
+<div class="card shadow mb-4">
+    <div class="card-header bg-success text-white">
+        <h3 class="my-0"><i class="fas fa-images me-2"></i>DeepFake Gallery</h3>
+    </div>
+    <div class="card-body">
+        <p class="lead">
+            This gallery showcases examples of real and deepfake images to help you understand 
+            what our detection system looks for. Learning to spot the differences can help you 
+            become more aware of deepfakes in everyday media.
+        </p>
+        
+        <ul class="nav nav-tabs mb-4" id="galleryTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="comparison-tab" data-bs-toggle="tab" data-bs-target="#comparison" 
+                        type="button" role="tab" aria-controls="comparison" aria-selected="true">
+                    Real vs Fake Comparison
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="deepfakes-tab" data-bs-toggle="tab" data-bs-target="#deepfakes" 
+                        type="button" role="tab" aria-controls="deepfakes" aria-selected="false">
+                    Deepfake Examples
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="telltale-tab" data-bs-toggle="tab" data-bs-target="#telltale" 
+                        type="button" role="tab" aria-controls="telltale" aria-selected="false">
+                    Telltale Signs
+                </button>
+            </li>
+        </ul>
+        
+        <div class="tab-content" id="galleryTabContent">
+            <!-- Real vs Fake Comparison Tab -->
+            <div class="tab-pane fade show active" id="comparison" role="tabpanel" aria-labelledby="comparison-tab">
+                <div class="row">
+                    <div class="col-md-12 mb-4">
+                        <h4 class="border-bottom pb-2">Side-by-Side Comparisons</h4>
+                        <p>
+                            These comparison examples show real photos alongside deepfake versions. 
+                            Look carefully at details like skin texture, reflections in the eyes, and facial proportions.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="row mb-5">
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-header bg-success text-white">
+                                <h5 class="mb-0">Real Photo</h5>
+                            </div>
+                            <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80" class="card-img-top" alt="Real Photo">
+                            <div class="card-body">
+                                <h5 class="card-title">Original Photo</h5>
+                                <p class="card-text">
+                                    Notice the natural skin texture, consistent lighting across the face, 
+                                    and realistic details in the eyes and hair.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-header bg-danger text-white">
+                                <h5 class="mb-0">DeepFake Version</h5>
+                            </div>
+                            <img src="https://images.unsplash.com/photo-1676397217532-ee3cbcc02f8c" class="card-img-top" alt="Deepfake Photo">
+                            <div class="card-body">
+                                <h5 class="card-title">AI-Generated Version</h5>
+                                <p class="card-text">
+                                    Look for unnatural smoothness in skin texture, inconsistent lighting, 
+                                    strange artifacts around the hairline, and flat or "dead" eyes.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-header bg-success text-white">
+                                <h5 class="mb-0">Real Photo</h5>
+                            </div>
+                            <img src="https://images.unsplash.com/photo-1468218457742-ee484fe2fe4c" class="card-img-top" alt="Real Photo">
+                            <div class="card-body">
+                                <h5 class="card-title">Original Photo</h5>
+                                <p class="card-text">
+                                    This real photo shows natural asymmetry in facial features, 
+                                    imperfections in skin, and complex details in shadows and highlights.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-header bg-danger text-white">
+                                <h5 class="mb-0">DeepFake Version</h5>
+                            </div>
+                            <img src="https://images.unsplash.com/photo-1579353977828-2a4eab540b9a" class="card-img-top" alt="Deepfake Photo">
+                            <div class="card-body">
+                                <h5 class="card-title">AI-Generated Version</h5>
+                                <p class="card-text">
+                                    Deepfakes often have too-perfect symmetry, odd blending areas between 
+                                    real and synthetic parts, and unusual artifacts in fine details.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Deepfake Examples Tab -->
+            <div class="tab-pane fade" id="deepfakes" role="tabpanel" aria-labelledby="deepfakes-tab">
+                <div class="row">
+                    <div class="col-md-12 mb-4">
+                        <h4 class="border-bottom pb-2">Examples of Different Deepfake Types</h4>
+                        <p>
+                            There are various types of deepfakes, created using different AI techniques. 
+                            Each type has characteristic artifacts that our detection system is trained to identify.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="row row-cols-1 row-cols-md-3 g-4">
+                    <div class="col">
+                        <div class="card h-100">
+                            <img src="https://images.unsplash.com/photo-1648195699350-fa0ed4a263e7" class="card-img-top" alt="Face Swap Deepfake">
+                            <div class="card-body">
+                                <h5 class="card-title">Face Swap</h5>
+                                <p class="card-text">
+                                    Face swapping replaces one person's face with another's. Look for blending issues 
+                                    at the edges of the face and inconsistent skin tones.
+                                </p>
+                            </div>
+                            <div class="card-footer bg-danger text-white">
+                                <small>Detected as: <strong>FAKE</strong></small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card h-100">
+                            <img src="https://images.unsplash.com/photo-1616045090958-458bd0e43e70" class="card-img-top" alt="Facial Reenactment">
+                            <div class="card-body">
+                                <h5 class="card-title">Facial Reenactment</h5>
+                                <p class="card-text">
+                                    This technique animates a source face according to a target person's expressions. 
+                                    Watch for unnatural movements and inconsistent eye blinking.
+                                </p>
+                            </div>
+                            <div class="card-footer bg-danger text-white">
+                                <small>Detected as: <strong>FAKE</strong></small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card h-100">
+                            <img src="https://images.unsplash.com/photo-1606921231106-f1083329a65c" class="card-img-top" alt="Fully Synthetic">
+                            <div class="card-body">
+                                <h5 class="card-title">Fully Synthetic</h5>
+                                <p class="card-text">
+                                    These are completely AI-generated faces that never existed. They often look very 
+                                    realistic but have subtle inconsistencies in facial features.
+                                </p>
+                            </div>
+                            <div class="card-footer bg-danger text-white">
+                                <small>Detected as: <strong>FAKE</strong></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert alert-warning mt-4">
+                    <h5><i class="fas fa-exclamation-triangle me-2"></i>Important Note</h5>
+                    <p class="mb-0">
+                        Deepfake technology is constantly improving. While our system achieves high accuracy, 
+                        the most sophisticated deepfakes may sometimes evade detection. Always maintain a 
+                        critical eye when consuming digital media.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Telltale Signs Tab -->
+            <div class="tab-pane fade" id="telltale" role="tabpanel" aria-labelledby="telltale-tab">
+                <div class="row">
+                    <div class="col-md-12 mb-4">
+                        <h4 class="border-bottom pb-2">Signs of Deepfake Manipulation</h4>
+                        <p>
+                            While deepfakes can be convincing at first glance, there are often subtle signs 
+                            that can help you identify them. Here's what to look for:
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-header bg-info text-white">
+                                <h5 class="mb-0">Visual Clues</h5>
+                            </div>
+                            <div class="card-body">
+                                <img src="https://images.unsplash.com/photo-1655393001768-d946c97d6fd1" class="img-fluid rounded mb-3" alt="Detection Visualization">
+                                
+                                <h6><i class="fas fa-check-circle text-success me-2"></i>Facial Features</h6>
+                                <ul>
+                                    <li>Unnatural eye shape, color, or reflections</li>
+                                    <li>Blurry or poorly defined facial features</li>
+                                    <li>Inconsistent skin textures or unnatural smoothness</li>
+                                    <li>Strange or missing teeth</li>
+                                </ul>
+                                
+                                <h6><i class="fas fa-check-circle text-success me-2"></i>Boundaries and Edges</h6>
+                                <ul>
+                                    <li>Blurry or distorted boundaries between face and hair</li>
+                                    <li>Unnatural transitions between face and neck</li>
+                                    <li>Missing or oddly shaped earlobes</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-header bg-warning text-dark">
+                                <h5 class="mb-0">Technical Artifacts</h5>
+                            </div>
+                            <div class="card-body">
+                                <img src="https://images.unsplash.com/photo-1712762056200-50d8f803ba10" class="img-fluid rounded mb-3" alt="Technical Analysis">
+                                
+                                <h6><i class="fas fa-microchip me-2"></i>Common Deepfake Errors</h6>
+                                <ul>
+                                    <li>Inconsistent lighting across the face</li>
+                                    <li>Unnatural or missing shadows</li>
+                                    <li>Flickering or warping at the edges</li>
+                                    <li>Strange color bleeding or artifacts</li>
+                                </ul>
+                                
+                                <h6><i class="fas fa-microchip me-2"></i>Metadata Clues</h6>
+                                <ul>
+                                    <li>Missing or inconsistent EXIF data</li>
+                                    <li>Unusual compression artifacts</li>
+                                    <li>Evidence of editing in image analysis</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <h5><i class="fas fa-lightbulb me-2"></i>Pro Tip</h5>
+                            <p class="mb-0">
+                                When in doubt, look at the background for inconsistencies. Deepfake algorithms 
+                                often focus on the face and may neglect proper integration with the background.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-2">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0">Test Your Deepfake Detection Skills</h5>
+                            </div>
+                            <div class="card-body text-center">
+                                <p>Ready to challenge yourself? Take our interactive quiz to see if you can spot the deepfakes!</p>
+                                <a href="{{ url_for('quiz') }}" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-question-circle me-2"></i>Start the Quiz
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
