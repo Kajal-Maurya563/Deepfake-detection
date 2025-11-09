@@ -1,22 +1,22 @@
 import datetime
 import os
 import logging
-import psycopg2
-from psycopg2.extras import RealDictCursor
+import mysql.connector
+from mysql.connector import Error
 
 logger = logging.getLogger(__name__)
 
 def get_db_connection():
-    """
-    Create a connection to the PostgreSQL database
-    
-    Returns:
-        A connection object to the PostgreSQL database
-    """
     try:
-        connection = psycopg2.connect(os.environ["DATABASE_URL"])
+        connection = mysql.connector.connect(
+        host=os.getenv("DB_HOST"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
+        database=os.getenv("DB_NAME"),
+        port=int(os.getenv("DB_PORT", 3306))
+        )
         return connection
-    except psycopg2.Error as e:
+    except Error as e:
         logger.error(f"Error connecting to database: {e}")
         raise
 
@@ -25,18 +25,18 @@ def init_db():
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        
+
         # Create the table for logging detection results
         cursor.execute('''
         CREATE TABLE IF NOT EXISTS image_log (
-            id SERIAL PRIMARY KEY,
+            id INT AUTO_INCREMENT PRIMARY KEY,
             filename TEXT,
             result TEXT,
-            confidence REAL,
-            timestamp TIMESTAMP
+            confidence FLOAT,
+            timestamp DATETIME
         )
         ''')
-        
+
         conn.commit()
         cursor.close()
         conn.close()
@@ -45,25 +45,17 @@ def init_db():
         logger.error(f"Error initializing database: {e}")
 
 def log_result(filename, result, confidence):
-    """
-    Log a detection result to the database
-    
-    Args:
-        filename: The filename of the processed image
-        result: The detection result ('Real' or 'Fake')
-        confidence: Confidence score of the prediction (0-1)
-    """
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        
+
         timestamp = datetime.datetime.now()
-        
+
         cursor.execute(
             "INSERT INTO image_log (filename, result, confidence, timestamp) VALUES (%s, %s, %s, %s)",
             (filename, result, confidence, timestamp)
         )
-        
+
         conn.commit()
         cursor.close()
         conn.close()
@@ -72,28 +64,18 @@ def log_result(filename, result, confidence):
         logger.error(f"Error logging result to database: {e}")
 
 def get_recent_results(limit=10):
-    """
-    Get recent detection results from the database
-    
-    Args:
-        limit: Maximum number of results to return
-        
-    Returns:
-        List of recent detection results
-    """
     try:
         conn = get_db_connection()
-        cursor = conn.cursor(cursor_factory=RealDictCursor)
-        
+        cursor = conn.cursor(dictionary=True)
+
         cursor.execute(
-            "SELECT * FROM image_log ORDER BY timestamp DESC LIMIT %s",
-            (limit,)
+            f"SELECT * FROM image_log ORDER BY timestamp DESC LIMIT {limit}"
         )
-        
+
         results = cursor.fetchall()
         cursor.close()
         conn.close()
-        
+
         return results
     except Exception as e:
         logger.error(f"Error retrieving results from database: {e}")

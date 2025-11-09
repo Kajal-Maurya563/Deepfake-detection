@@ -19,8 +19,16 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="image-container text-center mb-3">
-                            <img src="{{ url_for('static', filename='uploads/' + filename) }}" 
-                                 alt="Analyzed Image" class="img-fluid rounded">
+                            {% set ext = filename.rsplit('.', 1)[1].lower() %}
+                                {% if ext in ['mp4', 'avi', 'mov'] %}
+                                    <video controls class="img-fluid rounded">
+                                        <source src="{{ url_for('static', filename='uploads/' + filename) }}" type="video/{{ ext }}">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                {% else %}
+                                    <img src="{{ url_for('static', filename='uploads/' + filename) }}" alt="Analyzed Image" class="img-fluid rounded">
+                            {% endif %}
+                            
                         </div>
                     </div>
                     <div class="col-md-6">

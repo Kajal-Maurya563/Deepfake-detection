@@ -7,24 +7,54 @@
     <div class="col-lg-7">
         <div class="card mb-4 shadow-sm border-primary">
             <div class="card-header bg-primary text-white">
-                <h4 class="my-0"><i class="fas fa-upload me-2"></i>Upload Image for DeepFake Detection</h4>
+                <h4 class="my-0"><i class="fas fa-upload me-2"></i>Upload Image/Videos for DeepFake Detection</h4>
             </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-12">
                         <p class="lead">Detect if an image or video is real or a deepfake by uploading it below.</p>
-                        <form action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data" id="upload-form">
-                            <div class="mb-3">
-                                <label for="file" class="form-label">Choose an image or video:</label>
-                                <input class="form-control" type="file" id="file" name="file" accept=".jpg,.jpeg,.png,.mp4,.avi,.mov" required>
-                                <div class="form-text">Supported formats: JPG, JPEG, PNG, MP4, AVI, MOV. Max size: 32MB.</div>
-                            </div>
-                            <div class="d-grid">
-                                <button type="submit" class="btn btn-primary btn-lg" id="upload-btn">
-                                    <i class="fas fa-search me-2"></i>Detect DeepFake
-                                </button>
-                            </div>
-                        </form>
+                        <!-- Upload Image Section -->
+                            <form action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data" id="image-upload-form" class="mb-4">
+                                <div class="card mb-3 border-success">
+                                    <div class="card-header bg-success text-white">
+                                        <h5 class="my-0"><i class="fas fa-image me-2"></i>Upload Image</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label for="image-file" class="form-label">Choose an image:</label>
+                                            <input class="form-control" type="file" id="image-file" name="file" accept=".jpg,.jpeg,.png" required>
+                                            <div class="form-text">Supported formats: JPG, JPEG, PNG. Max size: 32MB.</div>
+                                        </div>
+                                        <div class="d-grid">
+                                            <button type="submit" class="btn btn-success btn-lg" id="image-upload-btn">
+                                                <i class="fas fa-search me-2"></i>Detect from Image
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                            
+                            <!-- Upload Video Section -->
+                            <form action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data" id="video-upload-form">
+                                <div class="card border-warning">
+                                    <div class="card-header bg-warning ">
+                                        <h5 class="my-0"><i class="fas fa-video me-2"></i>Upload Video</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label for="video-file" class="form-label">Choose a video:</label>
+                                            <input class="form-control" type="file" id="video-file" name="file" accept=".mp4,.avi,.mov" required>
+                                            <div class="form-text">Supported formats: MP4, AVI, MOV. Max size: 32MB.</div>
+                                        </div>
+                                        <div class="d-grid">
+                                            <button type="submit" class="btn btn-warning btn-lg " id="video-upload-btn">
+                                                <i class="fas fa-search me-2"></i>Detect from Video
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                            
                     </div>
                 </div>
 

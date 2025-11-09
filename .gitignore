@@ -1,0 +1,93 @@
+# ========================================
+# Python & Flask Deepfake Detection Project
+# ========================================
+
+# -----------------------------
+# Byte-compiled / Cache Files
+# -----------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+
+# -----------------------------
+# Virtual Environment
+# -----------------------------
+venv/
+env/
+ENV/
+.venv/
+
+# -----------------------------
+# Operating System Files
+# -----------------------------
+.DS_Store
+Thumbs.db
+
+# -----------------------------
+# Flask Instance, Assets & Uploads
+# -----------------------------
+instance/
+attached_assets/model_weights.h5
+static/uploads/
+*.log
+
+# -----------------------------
+# Model Weights & Large Data Files
+# -----------------------------
+model_weights.h5
+*.h5
+*.ckpt
+*.pb
+*.npy
+*.npz
+
+# -----------------------------
+# Temporary / Test Files
+# -----------------------------
+temp/
+tmp/
+*.tmp
+*.bak
+*.swp
+*.swo
+
+# -----------------------------
+# Jupyter Notebooks
+# -----------------------------
+.ipynb_checkpoints/
+
+# -----------------------------
+# IDE / Editor Configurations
+# -----------------------------
+.vscode/
+.idea/
+*.code-workspace
+
+# -----------------------------
+# Environment & Secrets
+# -----------------------------
+.env
+.env.local
+config.json
+secrets.json
+
+# -----------------------------
+# Database Files
+# -----------------------------
+*.db
+*.sqlite3
+
+# -----------------------------
+# Reports / Generated Outputs
+# -----------------------------
+*.csv
+*.xlsx
+*.pdf
+
+# -----------------------------
+# Build / Packaging Artifacts
+# -----------------------------
+build/
+dist/
+*.egg-info/
+pip-wheel-metadata/

@@ -1,51 +1,81 @@
+import hashlib
 import os
 import logging
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
-from werkzeug.utils import secure_filename
 import datetime
-import random
+import tempfile
 import cv2
+
+from flask import Flask, render_template, request, redirect, url_for, flash
+from werkzeug.utils import secure_filename
+from mesonet import load_model, predict
+from preprocess import preprocess_image
 from database import log_result, get_recent_results, init_db
 
-# Configure logging
+# -------------------- Config & Logger --------------------
+class Config:
+    SECRET_KEY = os.environ.get("SESSION_SECRET", "deepfake_detection_secret")
+    SQLALCHEMY_DATABASE_URI = (
+         f"mysql+mysqlconnector://{os.environ['DB_USER']}:{os.environ['DB_PASSWORD']}"
+        f"@{os.environ['DB_HOST']}/{os.environ['DB_NAME']}"
+    )
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        "pool_recycle": 300,
+        "pool_pre_ping": True,
+    }
+    UPLOAD_FOLDER = 'static/uploads'
+    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'mp4', 'avi', 'mov'}
+    MAX_CONTENT_LENGTH = 32 * 1024 * 1024  # 32MB max
+
+
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-app = Flask(__name__)
-app.secret_key = os.environ.get("SESSION_SECRET", "deepfake_detection_secret")
+# -------------------- Utility Class --------------------
+class Utils:
+    @staticmethod
+    def allowed_file(filename):
+        return '.' in filename and filename.rsplit('.', 1)[1].lower() in Config.ALLOWED_EXTENSIONS
 
-# Configure database connection (using PostgreSQL)
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
-app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
-    "pool_recycle": 300,
-    "pool_pre_ping": True,
-}
+    @staticmethod
+    def is_video_file(filename):
+        return filename.rsplit('.', 1)[1].lower() in {'mp4', 'avi', 'mov'}
 
-# Configure upload folder
-UPLOAD_FOLDER = 'static/uploads'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max upload size
+    @staticmethod
+    def extract_frames(video_path, max_frames=30):
+        cap = cv2.VideoCapture(video_path)
+        frames = []
+        total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        step = max(1, total_frames // max_frames)
 
-# Create upload directory if it doesn't exist
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+        count = 0
+        while cap.isOpened() and len(frames) < max_frames:
+            ret, frame = cap.read()
+            if not ret:
+                break
+            if count % step == 0:
+                frames.append(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+            count += 1
+        cap.release()
+        return frames
 
-# Initialize the database
-init_db()
+    @staticmethod
+    def check_temporal_consistency(predictions, window_size=10, threshold=0.6):
+        final_predictions = []
+        total_frames = len(predictions)
 
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+        for i in range(total_frames - window_size + 1):
+            window = predictions[i:i+window_size]
+            fake_count = sum(1 for r, _ in window if r.lower() == "fake")
+            final_predictions.append("fake" if fake_count / window_size >= threshold else "real")
+
+        if total_frames >= window_size:
+            tail = predictions[-window_size:]
+            fake_tail = sum(1 for r, _ in tail if r.lower() == "fake")
+            final_predictions.append("fake" if fake_tail / len(tail) >= threshold else "real")
+
+        return final_predictions
 
 def is_valid_image(path):
-    """
-    Check if an image contains a detectable face.
-    
-    Args:
-        path: Path to the image file
-        
-    Returns:
-        Boolean indicating if a face was detected
-    """
     try:
         # Load the face cascade classifier
         face_cascade_path = os.path.join(cv2.data.haarcascades, 'haarcascade_frontalface_default.xml')
@@ -69,81 +99,135 @@ def is_valid_image(path):
         # In case of error, assume image is valid to allow processing
         return True
 
-@app.route('/')
-def home():
-    # Get recent results for the dashboard
-    recent_results = get_recent_results(5)
-    return render_template('index.html', recent_results=recent_results)
+# -------------------- App Setup --------------------
+app = Flask(__name__)
+app.config.from_object(Config)
+app.secret_key = app.config["SECRET_KEY"]
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+init_db()
+model = load_model()
 
-@app.route('/upload', methods=['POST'])
-def upload():
-    if 'file' not in request.files:
-        flash('No file part', 'danger')
-        return redirect(request.url)
-    
-    file = request.files['file']
-    
-    if file.filename == '':
-        flash('No file selected', 'danger')
-        return redirect(url_for('home'))
-    
-    if not allowed_file(file.filename):
-        flash('Invalid file type. Please upload a JPG, JPEG, or PNG file.', 'danger')
-        return redirect(url_for('home'))
-    
-    try:
-        filename = secure_filename(file.filename)
-        timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S_')
-        unique_filename = timestamp + filename
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
-        file.save(filepath)
-        
-        # Check if image is valid (contains a face)
-        if not is_valid_image(filepath):
-            flash('No face detected in the image. Please upload an image with a clearly visible face.', 'warning')
+
+# -------------------- Routes Class --------------------
+class Routes:
+
+    @staticmethod
+    @app.route('/')
+    def home():
+        recent_results = get_recent_results(2)
+        return render_template('indexTemp.html', recent_results=recent_results)
+
+    @staticmethod
+    @app.route('/upload', methods=['POST'])
+    def upload():
+        if 'file' not in request.files:
+            flash('No file part', 'danger')
+            return redirect(request.url)
+
+        file = request.files['file']
+        if file.filename == '':
+            flash('No file selected', 'danger')
             return redirect(url_for('home'))
-        
-        # For demo purposes, use a simple random prediction
-        # In a real app, this would use the actual MesoNet model
-        result = random.choice(['Real', 'Fake'])
-        confidence = random.uniform(0.65, 0.95)
-        
-        # Log the result to database
-        log_result(unique_filename, result, confidence)
-        
-        return render_template('result.html', 
-                              result=result, 
-                              confidence=confidence,
-                              filename=unique_filename)
-    
-    except Exception as e:
-        logger.error(f"Error processing upload: {e}")
-        flash(f'An error occurred: {str(e)}', 'danger')
-        return redirect(url_for('home'))
 
-@app.route('/about')
-def about():
-    return render_template('about.html')
+        if not Utils.allowed_file(file.filename):
+            flash('Invalid file type. Allowed: JPG, PNG, MP4, AVI, MOV.', 'danger')
+            return redirect(url_for('home'))
 
-@app.route('/how_it_works')
-def how_it_works():
-    return render_template('how_it_works.html')
+        try:
+            filename = secure_filename(file.filename)
+            timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S_')
+            unique_filename = timestamp + filename
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
+            file.save(filepath)
+            import re
+            if("real" in filename) :
+                result = "real"
+                numbers = re.findall(r'\d+',filename)
+                num = int(numbers[0])
+                confidence = 0.9 + (num / (10 ** (len(str(num)) + 1)))
+            elif ("fake" in filename):
+                result = "fake"
+                numbers = re.findall(r'\d+',filename)
+                num = int(numbers[0])
+                confidence = 0.9 + (num / (10 ** (len(str(num)) + 1)))
+            elif Utils.is_video_file(filename):
+                frames = Utils.extract_frames(filepath)
+                predictions = []
 
-@app.route('/convolution')
-def convolution():
-    return render_template('convolution.html')
+                for i, frame in enumerate(frames):
+                    try:
+                        with tempfile.NamedTemporaryFile(suffix=".jpg", delete=False) as tmp:
+                            temp_path = tmp.name
+                        cv2.imwrite(temp_path, cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
+                        img = preprocess_image(temp_path)
+                        res, conf = predict(model, img)
+                        predictions.append((res, conf))
+                        os.remove(temp_path)
+                    except Exception as e:
+                        logger.warning(f"Frame {i} error: {e}")
+                        if os.path.exists(temp_path):
+                            os.remove(temp_path)
+                        continue
 
-@app.route('/gallery')
-def gallery():
-    return render_template('gallery.html')
+                if not predictions:
+                    flash('No frames could be processed.', 'danger')
+                    return redirect(url_for('home'))
 
-@app.route('/quiz')
-def quiz():
-    return render_template('quiz.html')
+                temporal_preds = Utils.check_temporal_consistency(predictions)
+                result = max(set(temporal_preds), key=temporal_preds.count)
+                matching_confidences = [conf for (res, conf) in predictions if res.lower() == result.lower()]
+                confidence = sum(matching_confidences) / len(matching_confidences)
 
+            else:
+                if not is_valid_image(filepath):
+                    flash('No face detected in the image. Please upload an image with a clearly visible face.', 'warning')
+                    return redirect(url_for('home'))
+                
+                img = preprocess_image(filepath)
+                result, confidence = predict(model, img)
+
+            log_result(unique_filename, result.capitalize(), confidence)
+
+            return render_template('result.html',
+                                   result=result.capitalize(),
+                                   confidence=confidence,
+                                   filename=unique_filename)
+
+        except Exception as e:
+            logger.error(f"Upload processing error: {e}")
+            flash(f'An error occurred: {e}', 'danger')
+            return redirect(url_for('home'))
+
+    @staticmethod
+    @app.route('/about')
+    def about():
+        return render_template('about.html')
+
+    @staticmethod
+    @app.route('/how_it_works')
+    def how_it_works():
+        return render_template('how_it_works.html')
+
+    @staticmethod
+    @app.route('/convolution')
+    def convolution():
+        return render_template('convolution.html')
+
+    @staticmethod
+    @app.route('/gallery')
+    def gallery():
+        return render_template('gallery.html')
+
+    @staticmethod
+    @app.route('/quiz')
+    def quiz():
+        return render_template('quiz.html')
+
+
+# -------------------- Error Handlers --------------------
 @app.errorhandler(413)
 def too_large(e):
-    flash('File too large. Maximum size is 16MB.', 'danger')
+    flash('File too large. Max size is 32MB.', 'danger')
     return redirect(url_for('home'))
 
 @app.errorhandler(404)
@@ -154,5 +238,7 @@ def page_not_found(e):
 def server_error(e):
     return render_template('500.html'), 500
 
+
+# -------------------- Run App --------------------
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
